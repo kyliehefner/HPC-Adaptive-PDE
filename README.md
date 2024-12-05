@@ -1,9 +1,4 @@
-### **Project Proposal: Adaptive Mesh Refinement for Solving Partial Differential Equations**
-
----
-
-### **Project Title:**  
-**High-Performance Adaptive Mesh Refinement for Partial Differential Equation Solvers Using OpenMP and MPI**
+### **High-Performance Adaptive Mesh Refinement for Partial Differential Equation Solvers Using OpenMP and MPI**
 
 ---
 
