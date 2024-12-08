@@ -41,6 +41,32 @@ void update_solution(Matrix &grid, const Matrix &velocity_x, const Matrix &veloc
     grid = new_grid; // update grid with new values
 }
 
+// Main program for the simulation
 int main() {
-    initialize_grid(10, 0); // 10x10 grid with initial values set to 0
+    int N = 10;             // grid size
+    double D = 0.1;          // diffusion coefficient
+    double dt = 0.01;        // time step
+    double dx = 1.0 / N;     // grid spacing in x-direction
+    double dy = 1.0 / N;     // grid spacing in y-direction
+
+    // initialize grid with initial values
+    Matrix grid = initialize_grid(N, 0.0);
+
+    // initialize velocity fields
+    Matrix velocity_x(N, vector<double>(N, 1.0)); // constant velocity in x-direction
+    Matrix velocity_y(N, vector<double>(N, 0.0)); // no velocity in y-direction
+
+    // run simulation for 100 time steps
+    for (int t = 0; t < 100; ++t) {
+        update_solution(grid, velocity_x, velocity_y, D, dt, dx, dy); // update grid values
+    }
+
+    // print final grid to console (for debugging)
+    for (const auto &row : grid) {
+        for (const auto &val : row) {
+            cout << val << " ";
+        }
+        cout << "\n";
+    }
+    return 0; 
 }
