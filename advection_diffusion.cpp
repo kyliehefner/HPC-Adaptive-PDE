@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <fstream> // for file I/O
 using namespace std;
 using Matrix = vector<vector<double>>; // define a type alias for matrix of doubles
 
@@ -41,6 +42,22 @@ void update_solution(Matrix &grid, const Matrix &velocity_x, const Matrix &veloc
     grid = new_grid; // update grid with new values
 }
 
+// Function to save the grid data to a CSV file
+void save_grid_to_csv(const Matrix &grid, const string &filename) {
+    ofstream file(filename); // open the file for writing
+
+    // loop through each row of the grid
+    for (const auto &row : grid) {
+        for (size_t j = 0; j < row.size(); ++j) {
+            file << row[j]; // write the value
+            if (j < row.size() - 1) file << ","; // add a comma if not the last column
+        }
+        file << "\n"; // newline after each row
+    }
+
+    file.close(); // close the file
+}
+
 // Main program for the simulation
 int main() {
     int N = 10;             // grid size
@@ -59,6 +76,11 @@ int main() {
     // run simulation for 100 time steps
     for (int t = 0; t < 100; ++t) {
         update_solution(grid, velocity_x, velocity_y, D, dt, dx, dy); // update grid values
+
+        // save grid data every 10 steps
+        if (t % 10 == 0) {
+            save_grid_to_csv(grid, "data/output_step_" + to_string(t) + ".csv");
+        }
     }
 
     // print final grid to console (for debugging)
