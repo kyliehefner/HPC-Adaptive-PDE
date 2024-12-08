@@ -10,7 +10,7 @@ This project aims to develop a high-performance solver for the **Advection-Diffu
 ## Advection-Diffusion Equation
 The governing equation:
 
-$$\frac{\partial u}{\partial t} + \vec{v} \cdot \nabla u = D \nabla^2 u$$
+$$\frac{\partial u}{\partial t} = D \nabla^2 u - \vec{v} \cdot \nabla u$$
 
 Where:
 - $$u(x, y, t)$$ is the scalar field (e.g., concentration or temperature).
