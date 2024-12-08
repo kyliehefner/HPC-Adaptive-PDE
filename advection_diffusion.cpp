@@ -83,12 +83,5 @@ int main() {
         }
     }
 
-    // print final grid to console (for debugging)
-    for (const auto &row : grid) {
-        for (const auto &val : row) {
-            cout << val << " ";
-        }
-        cout << "\n";
-    }
     return 0; 
 }
