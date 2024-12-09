@@ -23,7 +23,7 @@ for idx, step in enumerate(time_steps):
     
     # add a subplot for each time step
     plt.subplot(num_rows, num_cols, idx + 1)  # use dynamic grid positioning
-    plt.imshow(grid, cmap="hot", interpolation="nearest")
+    plt.imshow(grid, cmap="hot", interpolation="nearest", vmin=0.0, vmax=1.0)
     plt.colorbar(label="Concentration", shrink=0.7)
     plt.title(f"Step {step}")
 
