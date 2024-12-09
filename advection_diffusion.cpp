@@ -27,9 +27,21 @@ void update_solution(Matrix &grid, const Matrix &velocity_x, const Matrix &veloc
     // iterature over the interior grid points
     for (int i = 1; i < N - 1; ++i) {
         for (int j = 1; j < N - 1; ++j) {
-            // compute advection term in x and y directions
-            double advection_x = velocity_x[i][j] * (grid[i][j] - grid[i-1][j]) / dx;
-            double advection_y = velocity_y[i][j] * (grid[i][j] - grid[i][j-1]) / dy;
+
+            // compute advection term using upwind differencing
+            double advection_x;
+            if (velocity_x[i][j] > 0) {
+                advection_x = velocity_x[i][j] * (grid[i][j] - grid[i-1][j]) / dx;
+            } else {
+                advection_x = velocity_x[i][j] * (grid[i+1][j] - grid[i][j]) / dx;
+            }
+
+            double advection_y;
+            if (velocity_y[i][j] > 0) {
+                advection_y = velocity_y[i][j] * (grid[i][j] - grid[i][j-1]) / dy;
+            } else {
+                advection_y = velocity_y[i][j] * (grid[i][j+1] - grid[i][j]) / dy;
+            }
 
             // compute diffusion term using central difference
             double diffusion = D * ((grid[i+1][j] - 2 * grid[i][j] + grid[i-1][j]) / (dx * dx) +
