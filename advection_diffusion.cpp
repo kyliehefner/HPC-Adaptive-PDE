@@ -6,7 +6,7 @@
 using namespace std;
 using Matrix = vector<vector<double>>; // define a type alias for matrix of doubles
 
-// node class for the quadtree
+// Node class for the quadtree
 struct Node {
     double value; // the value at this node
     int level;    // refinement level of this node
@@ -22,7 +22,6 @@ struct Node {
         return children[0] == nullptr;
     }
 };
-
 
 // Function to initialize a 2D grid with boundary conditions
 Matrix initialize_grid(int N, double initial_value) {
@@ -46,6 +45,17 @@ Matrix initialize_grid(int N, double initial_value) {
 
     return grid;
 }
+
+// Function to calculate the error at a grid cell based on gradients
+double calculate_error(const Matrix &grid, int i, int j, double dx, double dy) {
+    // calculate partial derivatives using central differencing
+    double dudx = (grid[i+1][j] - grid[i-1][j]) / (2 * dx);
+    double dudy = (grid[i][j+1] - grid[i][j-1]) / (2 * dy);
+
+    // combine the absolute values of gradients in x and y directions
+    return (fabs(dudx) + fabs(dudy));
+}
+
 
 // Function to update the grid values based on advection-diffusion equation
 void update_solution(Matrix &grid, const Matrix &velocity_x, const Matrix &velocity_y, double D, double dt, double dx, double dy) {
