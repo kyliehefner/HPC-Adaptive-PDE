@@ -3,6 +3,7 @@
 #include <fstream> // for file I/O
 #include <cmath> // for absolute value
 #include <algorithm> // for maximum
+#include <chrono> // for timing
 using namespace std;
 using Matrix = vector<vector<double>>; // define a type alias for matrix of doubles
 
@@ -82,6 +83,8 @@ void save_grid_to_csv(const Matrix &grid, const string &filename) {
 
 // Main program for the simulation
 int main() {
+    auto start = chrono::high_resolution_clock::now(); // start timer
+
     int N = 100; // grid size
     double dx = 1.0 / N; // grid spacing in x-direction
     double dy = 1.0 / N; // grid spacing in y-direction
@@ -122,6 +125,10 @@ int main() {
 
         update_solution(grid, velocity_x, velocity_y, D, dt, dx, dy); // update grid values
     }
+
+    auto end = chrono::high_resolution_clock::now(); // end timer
+    chrono::duration<double> elapsed = end - start; // calculate runtime
+    cout << "Elapsed time: " << elapsed.count() << " seconds" << endl; // output runtime
 
     return 0; 
 }

@@ -3,6 +3,7 @@
 #include <fstream> // for file I/O
 #include <cmath> // for absolute value
 #include <algorithm> // for maximum
+#include <chrono> // for timing
 using namespace std;
 using Matrix = vector<vector<double>>; // define a type alias for matrix of doubles
 
@@ -179,7 +180,9 @@ void save_grid_to_csv(const Matrix &grid, const string &filename) {
 
 // Main program for the simulation
 int main() {
-    // STEP 1: Initialize grid and parameters
+    auto start = chrono::high_resolution_clock::now(); // start timer
+
+    // Initialize grid and parameters
     int N = 100; // grid size
     double dx = 1.0 / N, dy = 1.0 / N; // grid spacing
     Matrix grid = initialize_grid(N, 0.0); // initialize grid
@@ -190,7 +193,7 @@ int main() {
     double refine_threshold = 0.01; // threshold for refinement
     double coarsen_threshold = 0.001; // threshold for coursening
 
-    // STEP 2: Time-stepping loop
+    // Time-stepping loop
     int num_steps = 100;
     for (int t = 0; t < num_steps; ++t) {
 
@@ -207,7 +210,6 @@ int main() {
                 max_velocity = max(max_velocity, max(fabs(velocity_x[i][j]), fabs(velocity_y[i][j])));
             }
         }
-
         double dt_advection = dx / max_velocity; // Courant-Friedrichs-Lewy condition
         double dt_diffusion = (dx * dx) / (4 * D); // stability condition for diffusion
         double dt = min(dt_advection, dt_diffusion) / 2; // choose smaller time step
@@ -222,6 +224,10 @@ int main() {
 
         update_solution(grid, velocity_x, velocity_y, D, dt, dx, dy); // update grid values
     }
+
+    auto end = chrono::high_resolution_clock::now(); // end timer
+    chrono::duration<double> elapsed = end - start; // calculate runtime
+    cout << "Elapsed time: " << elapsed.count() << " seconds" << endl; // output runtime
 
     return 0; 
 }
