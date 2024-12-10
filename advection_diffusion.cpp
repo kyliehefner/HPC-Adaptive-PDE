@@ -56,6 +56,75 @@ double calculate_error(const Matrix &grid, int i, int j, double dx, double dy) {
     return (fabs(dudx) + fabs(dudy));
 }
 
+// Function to refine a node by splitting it into 4 child nodes
+void refine_grid(Node* node) {
+    if (!node->is_leaf()) return; // if the node is already refined, do nothing
+
+    double val = node->value;     // get the value of the current node
+    int next_level = node->level + 1; // increment the refinement level
+
+    // create 4 child nodes with the parent's value and next refinement level
+    for (int i = 0; i < 4; ++i) {
+        node->children[i] = new Node(val, next_level);
+    }
+}
+
+// Function to coarsen a node by merging its 4 child nodes into the parent
+void coarsen_grid(Node* node) {
+    if (node->is_leaf()) return; // if the node is already a leaf, do nothing
+
+    double avg_value = 0.0; // initialize the average value
+
+    // loop through the 4 child nodes to calculate their average value
+    for (int i = 0; i < 4; ++i) {
+        avg_value += node->children[i]->value; // accumulate the value of each child
+        delete node->children[i];             // delete the child node to free memory
+        node->children[i] = nullptr;          // set the child pointer to null
+    }
+
+    // set the parent node's value to the average of its children
+    node->value = avg_value / 4.0;
+}
+
+// Function to recursively check leaf nodes to find deepest level
+int find_deepest_level(Node* node) {
+    if (node->is_leaf()) return node->level; // Leaf node: return its level
+
+    int max_level = node->level; // Current level
+    for (int i = 0; i < 4; ++i) {
+        if (node->children[i] != nullptr) {
+            max_level = std::max(max_level, find_deepest_level(node->children[i]));
+        }
+    }
+    return max_level;
+}
+
+// Function using deepest level to calculate smallest cell size
+double find_min_dx(Node* root, double domain_size, int initial_grid_size) {
+    int deepest_level = find_deepest_level(root); // Find the deepest level in the quadtree
+    double initial_dx = domain_size / initial_grid_size; // Coarsest grid cell size
+    return initial_dx / pow(2, deepest_level); // Adjust for the refinement level
+}
+
+
+// Function to apply AMR logic: refine or coarsen grid cells based on error
+void apply_amr(Node* root, const Matrix &grid, double dx, double dy, double refine_threshold, double coarsen_threshold) {
+    for (int i = 1; i < grid.size() - 1; ++i) {     // loop through interior cells (avoid boundaries)
+        for (int j = 1; j < grid[0].size() - 1; ++j) {
+            // calculate the error at the current grid cell
+            double error = calculate_error(grid, i, j, dx, dy);
+
+            // refine the cell if the error exceeds the refine threshold
+            if (error > refine_threshold) {
+                refine_grid(root);
+            }
+            // coarsen the cell if the error is below the coarsen threshold
+            else if (error < coarsen_threshold) {
+                coarsen_grid(root);
+            }
+        }
+    }
+}
 
 // Function to update the grid values based on advection-diffusion equation
 void update_solution(Matrix &grid, const Matrix &velocity_x, const Matrix &velocity_y, double D, double dt, double dx, double dy) {
@@ -110,23 +179,26 @@ void save_grid_to_csv(const Matrix &grid, const string &filename) {
 
 // Main program for the simulation
 int main() {
+    // STEP 1: Initialize grid and parameters
     int N = 100; // grid size
-    double dx = 1.0 / N; // grid spacing in x-direction
-    double dy = 1.0 / N; // grid spacing in y-direction
-
-    // initialize grid with initial values
-    Matrix grid = initialize_grid(N, 0.0);
-    save_grid_to_csv(grid, "data/initial.csv");
-
+    double dx = 1.0 / N, dy = 1.0 / N; // grid spacing
+    Matrix grid = initialize_grid(N, 0.0); // initialize grid
+    Node* root = new Node(0.0, 0); // Create a root node with initial value
     double D = 0.01; // diffusion coefficient
-
-    // initialize velocity fields
     Matrix velocity_x(N, vector<double>(N, 2.0)); // velocity in x-direction (right=positive)
     Matrix velocity_y(N, vector<double>(N, 0.0)); // velocity in y-direction (down=positive)
+    double refine_threshold = 0.01; // threshold for refinement
+    double coarsen_threshold = 0.001; // threshold for coursening
 
-    // run simulation for set time steps
+    // STEP 2: Time-stepping loop
     int num_steps = 100;
     for (int t = 0; t < num_steps; ++t) {
+
+        // apply amr to refine/coarsen the grid
+        apply_amr(root, grid, dx, dy, refine_threshold, coarsen_threshold);
+
+        // find smallest cell size (min_dx) after AMR
+        double min_dx = find_min_dx(root, 1.0, 4);
         
         // calculate stable time step
         double max_velocity = 0.0;
