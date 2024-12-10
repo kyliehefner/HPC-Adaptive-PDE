@@ -6,6 +6,24 @@
 using namespace std;
 using Matrix = vector<vector<double>>; // define a type alias for matrix of doubles
 
+// node class for the quadtree
+struct Node {
+    double value; // the value at this node
+    int level;    // refinement level of this node
+    Node* children[4]; // array of pointers to child nodes
+
+    // constructure initializing a node with value and refinement
+    Node(double val, int lvl) : value(val), level(lvl) {
+        for (int i = 0; i < 4; ++i) children[i] = nullptr; // initialize child nodes as nullptr
+    }
+
+    // check if this node is a leaf (no subdivisions)
+    bool is_leaf() const {
+        return children[0] == nullptr;
+    }
+};
+
+
 // Function to initialize a 2D grid with boundary conditions
 Matrix initialize_grid(int N, double initial_value) {
     // create an NxN grid filled with the initial value
