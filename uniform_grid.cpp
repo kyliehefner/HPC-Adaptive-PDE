@@ -85,7 +85,7 @@ void save_grid_to_csv(const Matrix &grid, const string &filename) {
 int main() {
     auto start = chrono::high_resolution_clock::now(); // start timer
 
-    int N = 200; // grid size
+    int N = 600; // grid size
     double dx = 1.0 / N; // grid spacing in x-direction
     double dy = 1.0 / N; // grid spacing in y-direction
 

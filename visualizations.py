@@ -7,7 +7,7 @@ import os
 data_folder = "HPC-Adaptive-PDE/data"
 
 # list of time steps to visualize
-time_steps = range(0, 100, 10)
+time_steps = range(0, 200, 10)
 num_steps = len(time_steps)
 
 # determine the grid layout for subplots (rows and columns)
@@ -63,6 +63,6 @@ def update(frame):
 
 # Create the animation
 ani = animation.FuncAnimation(fig, update, frames=time_steps, interval=200)
-ani.save("solution_evolution.gif", fps=5)  # Save as GIF
+ani.save("solution_evolution.gif", writer='pillow', fps=5)  # Save as GIF
 plt.show()
 
