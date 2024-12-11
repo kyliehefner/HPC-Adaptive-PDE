@@ -1,9 +1,9 @@
-# **High-Performance Adaptive Solver for the Advection-Diffusion Equation Using OpenMP and MPI**
+# **High-Performance Adaptive Solver for the Advection-Diffusion Equation Using OpenMP**
 
 ---
 
 ## Project Overview
-This project aims to develop a high-performance solver for the **Advection-Diffusion Equation** using **Adaptive Mesh Refinement (AMR)** to dynamically adjust grid resolution based on the solution’s behavior. The advection-diffusion equation models the combined effects of transport (advection) and spreading (diffusion), making it both mathematically interesting and computationally intensive. The solver will leverage **MPI** for distributed memory parallelism and **OpenMP** for shared memory parallelism to achieve scalability.
+This project aims to develop a high-performance solver for the **Advection-Diffusion Equation** using **Adaptive Mesh Refinement (AMR)** to dynamically adjust grid resolution based on the solution’s behavior. The advection-diffusion equation models the combined effects of transport (advection) and spreading (diffusion), making it both mathematically interesting and computationally intensive. The solver will leverage **OpenMP** for shared memory parallelism to achieve scalability.
 
 ---
 
@@ -25,7 +25,6 @@ Where:
 2. **Incorporate Adaptive Mesh Refinement (AMR)**
    - Dynamically refine/coarsen the grid based on steep gradients or high error regions.
 3. **Parallelize the Solver**
-   - Use **MPI** for domain decomposition and communication between processes.
    - Use **OpenMP** to parallelize computations within each process.
 4. **Evaluate Scalability**
    - Analyze the solver’s performance in terms of runtime, speedup, and load balancing across nodes and threads.
@@ -53,10 +52,7 @@ $$u_{i,j}^{n+1} = u_{i,j}^n - \Delta t \vec{v} \cdot \nabla u + D \Delta t \nabl
 $$\text{Error} = \left| \frac{\partial u}{\partial x} \right| + \left| \frac{\partial u}{\partial y} \right|$$
 
 ### Step 3: Parallelization
-1. **MPI (Distributed Memory):**
-   - Decompose the computational domain into subdomains for each MPI process.
-   - Use communication primitives to synchronize boundary conditions and adaptively refine/coarsen the grid across processes.
-2. **OpenMP (Shared Memory):**
+- **OpenMP (Shared Memory):**
    - Parallelize time-stepping, error estimation, and grid refinement within each subdomain.
 
 ### Step 4: Testing and Scalability
@@ -82,9 +78,9 @@ $$\text{Error} = \left| \frac{\partial u}{\partial x} \right| + \left| \frac{\pa
 
 ## Tools and Technologies
 - **Programming Language:** C++
-- **Parallelization Libraries:** OpenMP, MPI
-- **Visualization Tools:** Matplotlib, Paraview, or VTK
-- **Testing Environment:** HPC cluster or multi-core machine
+- **Parallelization Libraries:** OpenMP
+- **Visualization Tools:** Matplotlib
+- **Testing Environment:** Multi-core machine
 
 ---
 
